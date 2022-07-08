@@ -61,13 +61,14 @@ contract Provenance {
         }
     }
     // function to display details of producer
-    function findProducer(address _producer) public view returns (string memory, uint, string memory, string memory, bool) {
+    function findProducer(address _producer) public view returns (address, string memory, uint, string memory, string memory, bool) {
         require(
                 bytes(producers[_producer].name).length > 0 || producers[_producer].phoneNo != 0 ||
                 bytes(producers[_producer].cityState).length != 0 || bytes(producers[_producer].country).length != 0,
                 "Producer doen't exist"
                 );
         return (
+            _producer,
             producers[_producer].name, 
             producers[_producer].phoneNo, producers[_producer].cityState,
             producers[_producer].country, producers[_producer].certified

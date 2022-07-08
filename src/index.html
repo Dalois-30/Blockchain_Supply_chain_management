@@ -56,97 +56,25 @@
             <nav class="navbar-mobile">
                 <div class="container-fluid">
                     <ul class="navbar-mobile__list list-unstyled">
-                        <li class="has-sub">
-                            <a class="js-arrow" href="#">
+                        <li>
+                            <a href="#" onclick="afficherLastAdd()">
                                 <i class="fas fa-tachometer-alt"></i>Dashboard</a>
-                            <ul class="navbar-mobile-sub__list list-unstyled js-sub-list">
-                                <li>
-                                    <a href="index.html">Dashboard 1</a>
-                                </li>
-                                <li>
-                                    <a href="index2.html">Dashboard 2</a>
-                                </li>
-                                <li>
-                                    <a href="index3.html">Dashboard 3</a>
-                                </li>
-                                <li>
-                                    <a href="index4.html">Dashboard 4</a>
-                                </li>
-                            </ul>
                         </li>
                         <li>
-                            <a href="chart.html">
-                                <i class="fas fa-chart-bar"></i>Charts</a>
+                            <a href="#" onclick="afficherProduct()" style="cursor: pointer;">
+                                <i class="fas fa-chart-bar"></i>Products</a>
                         </li>
                         <li>
-                            <a href="table.html">
-                                <i class="fas fa-table"></i>Tables</a>
+                            <a href="#" onclick="afficherProducer()" style="cursor: pointer;">
+                                <i class="fas fa-table"></i>Producers</a>
                         </li>
                         <li>
-                            <a href="form.html">
-                                <i class="far fa-check-square"></i>Forms</a>
+                            <a href="#" onclick="afficherSupplier('supplier')" style="cursor: pointer;">
+                                <i class="far fa-check-square"></i>Suppliers</a>
                         </li>
                         <li>
-                            <a href="calendar.html">
-                                <i class="fas fa-calendar-alt"></i>Calendar</a>
-                        </li>
-                        <li>
-                            <a href="map.html">
-                                <i class="fas fa-map-marker-alt"></i>Maps</a>
-                        </li>
-                        <li class="has-sub">
-                            <a class="js-arrow" href="#">
-                                <i class="fas fa-copy"></i>Pages</a>
-                            <ul class="navbar-mobile-sub__list list-unstyled js-sub-list">
-                                <li>
-                                    <a href="login.html">Login</a>
-                                </li>
-                                <li>
-                                    <a href="register.html">Register</a>
-                                </li>
-                                <li>
-                                    <a href="forget-pass.html">Forget Password</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="has-sub">
-                            <a class="js-arrow" href="#">
-                                <i class="fas fa-desktop"></i>UI Elements</a>
-                            <ul class="navbar-mobile-sub__list list-unstyled js-sub-list">
-                                <li>
-                                    <a href="button.html">Button</a>
-                                </li>
-                                <li>
-                                    <a href="badge.html">Badges</a>
-                                </li>
-                                <li>
-                                    <a href="tab.html">Tabs</a>
-                                </li>
-                                <li>
-                                    <a href="card.html">Cards</a>
-                                </li>
-                                <li>
-                                    <a href="alert.html">Alerts</a>
-                                </li>
-                                <li>
-                                    <a href="progress-bar.html">Progress Bars</a>
-                                </li>
-                                <li>
-                                    <a href="modal.html">Modals</a>
-                                </li>
-                                <li>
-                                    <a href="switch.html">Switchs</a>
-                                </li>
-                                <li>
-                                    <a href="grid.html">Grids</a>
-                                </li>
-                                <li>
-                                    <a href="fontawesome.html">Fontawesome Icon</a>
-                                </li>
-                                <li>
-                                    <a href="typo.html">Typography</a>
-                                </li>
-                            </ul>
+                            <a href="#" onclick="afficherShipment('shipment')" style="cursor: pointer;">
+                                <i class="fas fa-calendar-alt"></i>Shipments</a>
                         </li>
                     </ul>
                 </div>
@@ -173,7 +101,7 @@
                                 <i class="fas fa-chart-bar"></i>Products</a>
                         </li>
                         <li>
-                            <a href="#" id="producer" onclick="utility.allProducers()" style="cursor: pointer;">
+                            <a href="#" id="producer" onclick="afficherProducer()" style="cursor: pointer;">
                                 <i class="fas fa-table"></i>Producers</a>
                         </li>
                         <li>
@@ -436,11 +364,10 @@
                                             <tr>
                                                 <th>name</th>
                                                 <th>phone </th>
-                                                <th>city state</th>
-                                                <th>date</th>
-                                                <th>status</th>
                                                 <th>country</th>
-                                                <th></th>
+                                                <th>city state</th>
+                                                <th>status</th>
+                                                <th>address</th>
                                             </tr>
                                         </thead>
                                         <tbody id="tbodyProducer">
@@ -987,7 +914,7 @@
     <!-- Modal Elements-->
     <div class="modal fade" id="modalProducerForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
         aria-hidden="true">
-        <div class="modal-dialog  modal-sm" role="document">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header text-center">
                     <h4 class="modal-title w-100 font-weight-bold" id="myModalLabel">New Producer</h4>
@@ -1018,7 +945,7 @@
                 </div>
                 <div class="modal-footer d-flex justify-content-center">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button class="btn btn-primary" onclick="prod()">Confirm </button>
+                    <button class="btn btn-primary" onclick="newProducer()">Confirm </button>
                 </div>
             </div>
         </div>
@@ -1056,7 +983,8 @@
 
                 </div>
                 <div class="modal-footer d-flex justify-content-center">
-                    <button class="au-btn au-btn-icon au-btn--blue">Send </button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary">Confirm </button>
                 </div>
             </div>
         </div>
@@ -1093,8 +1021,9 @@
                     </div>
 
                 </div>
-                <div class="modal-footer d-flex justify-content-center">
-                    <button class="au-btn au-btn-icon au-btn--blue">Send </button>
+                <div class="modal-footer d-flex justify-content-center">                    
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary">Confirm </button>
                 </div>
             </div>
         </div>
@@ -1152,24 +1081,25 @@
 
                 </div>
                 <div class="modal-footer d-flex justify-content-center">
-                    <button class="au-btn au-btn-icon au-btn--blue">Send </button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary">Confirm </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="trTemplate" style="display:none">
+    <div  id="trTemplate" style="display:none">
         <tr class="tr-shadow">
-            <td class="block-name" id="name">Lori Lynch</td>
+            <td class="name">Lori Lynch</td>
             <td>
-                <span class="block-email" id="phone">lori@example.com</span>
+                <span class="block-email">lori@example.com</span>
             </td>
-            <td class="desc" id="cityState">Samsung S8 Black</td>
-            <td class="date">2018-09-27 02:12</td>
+            <td class="desc">Samsung S8 Black</td>
+            <td clsss="date">2018-09-27 02:12</td>
             <td>
-                <span class="status--process" id="status">Processed</span>
+                <span class="status--process">Processed</span>
             </td>
-            <td class="country" id="country">$679.00</td>
+            <td class="country">$679.00</td>
             <td>
                 <div class="table-data-feature">
                     <button class="item" data-toggle="tooltip" data-placement="top" title="Edit">
@@ -1181,7 +1111,10 @@
                 </div>
             </td>
         </tr>
+        <tr class="spacer"></tr>
     </div>
+
+    
     
 
     <!-- Jquery JS-->
@@ -1276,54 +1209,12 @@
             document.getElementById('producer').style.color = 'DarkSlateGrey'
         }
 
-
-    </script>
-    <script>
-        
-        
-        var producers = []
-        
-        
-        function deltile(t){
-            if (confirm("delete this producer ?")){
-                document.getElementById(t).parentNode.removeChild(document.getElementById(t));
-                alert(" deleted ");
-            }
-            else{
-                alert(" not deleted ")
-            }
+        function afficherProducer(){
+            //document.getElementById('tbodyProducer').innerHTML = " ";
+            utility.allProducers();
         }
 
-        function certified(t){
-            if(confirm("certified this producer ?")){
-                document.getElementById(t).innerHTML = "Certified"
-                document.getElementById(t).setAttribute("class", "status--process")
-                
-            }
-            else{
-                alert("not certified")
-            }
-        }
-
-        async function prod(){
-            var tbody = $('#tbodyProducer');
-              var trTemplate = $('#trTemplate');
-              trTemplate.find('#name').text("dalois");
-              trTemplate.find('#phone').text("65532")
-              trTemplate.find('#cityState').text("dla")
-              trTemplate.find('#date').text(new Date().toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"}))
-              if (1<2){
-                trTemplate.find('#status').text('confirmed')
-                trTemplate.find('#status').attr('class', 'status--process');
-              }else{
-                trTemplate.find('#status').text('not confirmed')
-                trTemplate.find('#status').attr('class', 'status--denied');
-              }              
-              trTemplate.find('#country').text("cmr")
-              tbody.append(trTemplate.html());
-        }
-        
-        async function addProducer(){
+        function newProducer(){
             var producer = {
                 name: document.getElementById('producerName').value,
                 phoneNo: document.getElementById('producerPhoneNo').value,
@@ -1332,131 +1223,19 @@
                 status: 'not certified',
                 country: document.getElementById('producerCountry').value
             }
-            var adr = utility.allProducers(); 
-            console.log(adr);
-
-            function start(producer) {
-                // récupère une référence vers l'élément body
-                var tablebody = document.getElementById("tbodyProducer");
-                
-                // création des cellules
-                
-    
-                // création d'un élément <tr>
-                row = document.createElement("tr");
-                row.classList.add("tr-shadow");
-                row.setAttribute("id", "tr"+producer.phoneNo.toString())
-                // création d'un élément <td>
-                td1 = document.createElement("td");
-                // création d'un nœud texte
-                texte = document.createTextNode(producer.name);
-                // ajoute le nœud texte créé à la cellule <td>
-                td1.appendChild(texte);
-                // ajoute la cellule <td> à la ligne <tr>
-                row.appendChild(td1);
-                    
-                // création d'un élément <td> 2
-                td2 = document.createElement("td");
-                span1 = document.createElement("span")
-                span1.classList.add("block-email");
-                // création d'un nœud texte
-                texte = document.createTextNode(producer.phoneNo);
-                // ajoute le nœud texte créé au span <span>
-                span1.appendChild(texte);
-                // ajouter le span au td
-                td2.appendChild(span1);
-                // ajoute la cellule <td> à la ligne <tr>
-                row.appendChild(td2);
-    
-                    // création d'un élément <td> 3
-                td3 = document.createElement("td");
-                td3.classList.add("desc");
-                // création d'un nœud texte
-                texte = document.createTextNode(producer.city);
-                // ajoute le nœud texte créé à la cellule <td>
-                td3.appendChild(texte);
-                // ajoute la cellule <td> à la ligne <tr>
-                row.appendChild(td3);
-    
-                // création d'un élément <td> 4
-                td4 = document.createElement("td");
-                // création d'un nœud texte
-                texte = document.createTextNode(producer.date);
-                // ajoute le nœud texte créé à la cellule <td>
-                td4.appendChild(texte);
-                // ajoute la cellule <td> à la ligne <tr>
-                row.appendChild(td4);
-    
-                // création d'un élément <td> 5
-                td5 = document.createElement("td");
-                span2 = document.createElement("span")
-                span2.classList.add("status--denied");
-                span2.setAttribute("id", "span2"+parseInt(Math.random()*10000000000).toString())
-                console.log(span2.getAttribute("id"))
-                // création d'un nœud texte
-                texte = document.createTextNode(producer.status);
-                // ajoute le nœud texte créé au span <span>
-                span2.appendChild(texte);
-                // ajouter le span au td
-                td5.appendChild(span2);
-                // ajoute la cellule <td> à la ligne <tr>
-                row.appendChild(td5);
-    
-                // création d'un élément <td> 6
-                td6 = document.createElement("td");
-                // création d'un nœud texte
-                texte = document.createTextNode(producer.country);
-                // ajoute le nœud texte créé à la cellule <td>
-                td6.appendChild(texte);
-                // ajoute la cellule <td> à la ligne <tr>
-                row.appendChild(td6);
-    
-                // création d'un élément <td> 7
-                td7 = document.createElement("td");
-                div1 = document.createElement("div");
-                div1.classList.add("table-data-feature");
-                button1 = document.createElement("button");
-                button1.setAttribute('title', "Edit");
-                button1.setAttribute('class', "item");
-                button1.setAttribute('onclick', 'certified(span2.getAttribute("id"))')
-                i1 = document.createElement("i");
-                i1.classList.add("zmdi", "zmdi-edit");
-                button2 = document.createElement("button");
-                button2.setAttribute('title', "Delete");
-                button2.setAttribute('class', "item");
-                button2.setAttribute('onclick', 'deltile(row.getAttribute("id"))')
-                i2 = document.createElement("i");
-                i2.classList.add("zmdi", "zmdi-delete");
-                button1.appendChild(i1); 
-                button2.appendChild(i2);
-                div1.appendChild(button1);
-                div1.appendChild(button2);
-                // ajouter le span au td
-                td7.appendChild(div1);
-                // ajoute la cellule <td> à la ligne <tr>
-                row.appendChild(td7);
-                // ajoute la ligne <tr> à l'élément <tbody>
-                tablebody.appendChild(row);
-                row2 = document.createElement("tr");
-                row2.classList.add("spacer")
-                tablebody.appendChild(row2);
-    
-                
-                console.log(producers);
-                
-            }
-    
             utility.addProducer(producer.name, producer.phoneNo, producer.city, producer.country)
-                
-          
         }
+
+        function certifyProd(address){
+            if (confirm("certified this producer ?")) { 
+                utility.certifyProducer(address);
+             }
+             else{
+                alert("not certified !")
+             }
+        }
+
     </script>
-
-
-
-
-
-
 
 </body>
 

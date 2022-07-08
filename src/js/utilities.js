@@ -12,6 +12,7 @@ utility = {
 
     web3Provider: null,
     contracts : {},
+    producersAdd:{},
 
 
     connect: async function() {
@@ -87,15 +88,16 @@ utility = {
             }).then(function(result){
               console.log(result);
               console.log("Producer successfull added to the blockchain");
+              utility.allProducers();
             }).catch(function(err){
-              console.log(err.message);
+              console.log(err);
             });
         });
     },
 
-    removeProducer: async function(address, callback){
+    removeProducer: async function(address){
         var ProvenanceInstance;
-        this.web3.eth.getAccounts(function(error, accounts){
+        web3.eth.getAccounts(function(error, accounts){
             if (error) {
               console.log(error);
             }
@@ -109,68 +111,171 @@ utility = {
               return ProvenanceInstance.removeProducer(address, {from: account});
             }).then(function(result){
               console.log(result)
-              callback(result);
+              utility.allProducers();
               console.log("Producer successfull removed to the blockchain");
             }).catch(function(err){
-              console.log(err.message);
-              callback("ERROR 404")
+              console.log(err.message)
             });
         });
     },
 
     findProducer: async function(address){
-        var ProvenanceInstance;
-        web3.eth.getAccounts(function(error, accounts){
-            if (error) {
-              console.log(error);
-            }
-            
-            utility.contracts.Provenance.deployed().then(function(instance){
-              ProvenanceInstance = instance;
-      
-              // Execute adopt as a transaction by sending account
-              return ProvenanceInstance.findProducer(address);
-            }).then(function(result){
 
-              var tbody = $('#tbodyProducer');
-              var trTemplate = $('#trTemplate');
-              trTemplate.find('#name').text("dalois");
-              trTemplate.find('#phone').text("65532")
-              trTemplate.find('#cityState').text("dla")
-              trTemplate.find('#date').text(new Date().toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"}))
-              if (1<2){
-                trTemplate.find('#status').text('confirmed')
-                trTemplate.find('#status').attr('class', 'status--process');
-              }else{
-                trTemplate.find('#status').text('not confirmed')
-                trTemplate.find('#status').attr('class', 'status--denied');
-              }              
-              trTemplate.find('#country').text("cmr")
-              tbody.append(trTemplate.html());
-             // console.log('producer');
-             // result[1] = result[1].toNumber()
-             // console.log(result);
-             // var tbody = $('#tbodyProducer');
-             // var trTemplate = $('#trTemplate');
-             // trTemplate.find('.block-name').text(result["0"]);
-             // trTemplate.find('.block-email').text(result["1"])
-             // trTemplate.find('.desc').text(result["2"])
-             // trTemplate.find('.date').text(new Date().toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"}))
-             // if (result[4]){
-             //   trTemplate.find('.status--process').text('confirmed')
-             // }else{
-             //   trTemplate.find('.status--process').text('not confirmed')
-             //   trTemplate.find('.status--process').attr('class', 'status--denied');
-             // }              
-             // trTemplate.find('.country').text(result[3])
-             // tbody.append(trTemplate.html());
-            }).catch(function(err){
-              console.log(err.message);
-            });
-        });
+        var ProvenanceInstance;
+        accounts = web3.eth.getAccounts()
+    
+          
+        ProvenanceInstance = await utility.contracts.Provenance.deployed();
+        result = await ProvenanceInstance.findProducer(address);
+        console.log("voici le producteur")
+        console.log(result)
+        console.log("voici l'addresse")
+        console.log('producer');
+        result[2] = result[2].toNumber()
+        console.log(result);
+        utility.producersAdd[result[0]] = result[0]
+        
+        // récupère une référence vers l'élément body
+        var tablebody = document.getElementById("tbodyProducer");
+        // création des cellules
+        
+
+        // création d'un élément <tr>
+        row = document.createElement("tr");
+        row.classList.add("tr-shadow");
+        td1 = document.createElement("td");
+        // création d'un nœud texte
+        texte = document.createTextNode(result[1]);
+        // ajoute le nœud texte créé à la cellule <td>
+        td1.appendChild(texte);
+        // ajoute la cellule <td> à la ligne <tr>
+        row.appendChild(td1);
+            
+        // création d'un élément <td> 2
+        td2 = document.createElement("td");
+        span1 = document.createElement("span")
+        span1.classList.add("block-email");
+        // création d'un nœud texte
+        texte = document.createTextNode(result[2]);
+        // ajoute le nœud texte créé au span <span>
+        span1.appendChild(texte);
+        // ajouter le span au td
+        td2.appendChild(span1);
+        // ajoute la cellule <td> à la ligne <tr>
+        row.appendChild(td2);
+
+            // création d'un élément <td> 3
+        td3 = document.createElement("td");
+        td3.classList.add("desc");
+        // création d'un nœud texte
+        texte = document.createTextNode(result[4]);
+        // ajoute le nœud texte créé à la cellule <td>
+        td3.appendChild(texte);
+        // ajoute la cellule <td> à la ligne <tr>
+        row.appendChild(td3);
+
+        // création d'un élément <td> 4
+        td4 = document.createElement("td");
+        // création d'un nœud texte
+        //texte = document.createTextNode(new Date().toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"}),);
+        texte = document.createTextNode(result[3]);
+        // ajoute le nœud texte créé à la cellule <td>
+        td4.appendChild(texte);
+        // ajoute la cellule <td> à la ligne <tr>
+        row.appendChild(td4);
+
+        // création d'un élément <td> 5
+        td5 = document.createElement("td");
+        span2 = document.createElement("span");
+        if (result[5]){
+          span2.classList.add("status--process");
+          texte = document.createTextNode("confirmed");
+        }else{
+          span2.classList.add("status--denied");
+          texte = document.createTextNode("not confirmed");
+        }
+        // ajoute le nœud texte créé au span <span>
+        span2.appendChild(texte);
+        // ajouter le span au td
+        td5.appendChild(span2);
+        // ajoute la cellule <td> à la ligne <tr>
+        row.appendChild(td5);
+
+        //// création d'un élément <td> 6
+        //td6 = document.createElement("td");
+        //// création d'un nœud texte
+        //texte = document.createTextNode(address);
+        //// ajoute le nœud texte créé à la cellule <td>
+        //td6.appendChild(texte);
+        //// ajoute la cellule <td> à la ligne <tr>
+        //row.appendChild(td6);
+
+        // création d'un élément <td> 7
+        td7 = document.createElement("td");
+        div1 = document.createElement("div");
+        div1.classList.add("table-data-feature");
+        button1 = document.createElement("button");
+        button1.setAttribute('title', "Certify");
+        button1.setAttribute('class', "item");
+        button1.setAttribute('onclick', 'certifyProd(result[0]);')
+        i1 = document.createElement("i");
+        i1.classList.add("zmdi", "zmdi-edit");
+        button2 = document.createElement("button");
+        button2.setAttribute('title', "Delete");
+        button2.setAttribute('class', "item");
+        button2.setAttribute('onclick', 'utility.removeProducer(result[0]);')
+        i2 = document.createElement("i");
+        i2.classList.add("zmdi", "zmdi-delete");
+        button1.appendChild(i1); 
+        button2.appendChild(i2);
+        div1.appendChild(button1);
+        div1.appendChild(button2);
+        // ajouter le span au td
+        td7.appendChild(div1);
+        // ajoute la cellule <td> à la ligne <tr>
+        row.appendChild(td7);
+        // ajoute la ligne <tr> à l'élément <tbody>
+        tablebody.appendChild(row);
+        row2 = document.createElement("tr");
+        row2.classList.add("spacer")
+        tablebody.appendChild(row2);
+        //var tbody = $('#tbodyProducer');
+        //var trTemplate = $('#trTemplate');
+        //          
+        //trTemplate.find('.name').text(result[0]);
+        //trTemplate.find('.block-email').text(result["1"])
+        //trTemplate.find('.desc').text(result["2"])
+        //trTemplate.find('.date').text(new Date().toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"}))
+        //if (result[4]){
+        //  trTemplate.find('.status--process').text('confirmed');
+        //  trTemplate.find('.status--process').attr('class', 'status--process');
+        //}else{
+        //  trTemplate.find('.status--process').text('not confirmed')
+        //  trTemplate.find('.status--process').attr('class', 'status--denied');
+        //}              
+        //trTemplate.find('.country').text(result[3])
+        //tbody.append(trTemplate.html());
+
+        //web3.eth.getAccounts(function(error, accounts){
+        //    if (error) {
+        //      console.log(error);
+        //    }
+        //    
+        //    utility.contracts.Provenance.deployed().then(function(instance){
+        //      ProvenanceInstance = instance;
+      //
+        //      // Execute adopt as a transaction by sending account
+        //      return ProvenanceInstance.findProducer(address);
+        //    }).then(function(result){
+
+        //    }).catch(function(err){
+        //      console.log(err.message);
+        //    });
+        //});
     },
 
     allProducers: async function(){
+
       var ProvenanceInstance;
       web3.eth.getAccounts(function(error, accounts){
           if (error) {
@@ -199,19 +304,23 @@ utility = {
             $('#supplier').attr('style', 'color:DarkSlateGrey');
             $('#shipment').attr('style', 'color:DarkSlateGrey');
 
-            
+            var tablebody = document.getElementById("tbodyProducer");
+            tablebody.innerHTML = " ";
             for(i=0; i<result.length; i++){
-              utility.findProducer(result[i])
+              if(result[i] !== '0x0000000000000000000000000000000000000000')
+                utility.findProducer(result[i])
+              
             }
+            console.log(utility.producersAdd)
           }).catch(function(err){
             console.log(err.message);
           });
       });
     },
 
-    certifyProducer: async function(address, callback){
+    certifyProducer: async function(address){
         var ProvenanceInstance;
-        this.web3.eth.getAccounts(function(error, accounts){
+        web3.eth.getAccounts(function(error, accounts){
             if (error) {
               console.log(error);
             }
@@ -224,11 +333,10 @@ utility = {
               return ProvenanceInstance.certifyProducer(address, {from: account});
             }).then(function(result){
               console.log("producer certified");
+              utility.allProducers();
               console.log(result);
-              callback(result);
             }).catch(function(err){
               console.log(err.message);
-              callback("ERROR 404")
             });
         });  
     },
