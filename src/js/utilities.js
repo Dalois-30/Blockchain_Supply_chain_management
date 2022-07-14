@@ -26,6 +26,7 @@ utility = {
           const accounts = await ethereum.request({ method: "eth_accounts" });
           console.log(accounts);
           document.getElementById("connectButton").innerHTML = accounts[0];
+            
         } catch (error) {
           console.log(error);
         }
@@ -56,6 +57,29 @@ utility = {
 
         // Set the provider for our contract
         utility.contracts.Tracking.setProvider(utility.web3Provider);
+
+        var TrakingInstance;
+        web3.eth.getAccounts(function(error, accounts){
+            if (error) {
+              console.log(error);
+            }
+
+            var account = accounts[0];
+            utility.contracts.Tracking.deployed().then(function(instance){
+              TrakingInstance = instance;
+            
+              // Execute adopt as a transaction by sending account
+              return TrakingInstance.getBalance(account);
+            }).then(function(result){
+              console.log("balance");
+              result = result.toNumber()
+              console.log(result);
+              document.getElementById("balance").innerHTML = "$"+result
+              console.log(result);
+            }).catch(function(err){
+              console.log(err.message);
+            });
+        });
       });
       $.getJSON('Reputation.json', function(data) {
         // Get the necessary contract artifact file and instantiate it with @truffle/contract
@@ -65,6 +89,9 @@ utility = {
         // Set the provider for our contract
         utility.contracts.Reputation.setProvider(utility.web3Provider);
       });
+      
+      
+        
     },
     
     // CONTRACT PROVENANCE
@@ -341,9 +368,9 @@ utility = {
         });  
     },
 
-    addProduct : async function(seriaNo, locationData, callback){
+    addProduct : async function(seriaNo, name, url, price){
         var ProvenanceInstance;
-        this.web3.eth.getAccounts(function(error, accounts){
+        web3.eth.getAccounts(function(error, accounts){
             if (error) {
               console.log(error);
             }
@@ -353,21 +380,20 @@ utility = {
               ProvenanceInstance = instance;
       
               // Execute adopt as a transaction by sending account
-              return ProvenanceInstance.addProduct(seriaNo, locationData, {from: account});
+              return ProvenanceInstance.addProduct(seriaNo, name, url, price, {from: account});
             }).then(function(result){
               console.log("product added");
               console.log(result);
-              callback(result);
+              utility.allProducts();
             }).catch(function(err){
               console.log(err.message);
-              callback("ERROR 404")
             });
         });    
     },
 
-    removeProduct : function(seriaNo, callback){
+    removeProduct : function(seriaNo){
         var ProvenanceInstance;
-        this.web3.eth.getAccounts(function(error, accounts){
+        web3.eth.getAccounts(function(error, accounts){
             if (error) {
               console.log(error);
             }
@@ -381,44 +407,147 @@ utility = {
             }).then(function(result){
               console.log("product removed");
               console.log(result);
-              callback(result);
+              afficherProduct();
             }).catch(function(err){
               console.log(err.message);
-              callback("ERROR 404")
             });
         });    
     }, 
 
-    findProduct: function(seriaNo, callback){
+    findProduct: async function(seriaNo){
         var ProvenanceInstance;
-        this.web3.eth.getAccounts(function(error, accounts){
-            if (error) {
-              console.log(error);
-            }
 
-            var account = accounts[0];
-            utility.contracts.Provenance.deployed().then(function(instance){
-              ProvenanceInstance = instance;
+        ProvenanceInstance = await utility.contracts.Provenance.deployed();
+        result = await ProvenanceInstance.findProduct(seriaNo);
+
+
+        console.log("product");
+        console.log(result)
+        //result[3][0]=result[3][0].toNumber();
+        //result[3][1]=result[3][1].toNumber();
+        result[5]=result[5].toNumber()
+        console.log(result[3].toString);
+        // récupère une référence vers l'élément body
+        var tablebody = document.getElementById("tbodyProduct");
+        // création des cellules
+
+
+        // création d'un élément <tr>
+        row = document.createElement("tr");
+        row.classList.add("tr-shadow");
+        td1 = document.createElement("td");
+        // création d'un nœud texte
+        texte = document.createTextNode(result[1]);
+        // ajoute le nœud texte créé à la cellule <td>
+        td1.appendChild(texte);
+        // ajoute la cellule <td> à la ligne <tr>
+        row.appendChild(td1);
+
+        // création d'un élément <td> 2
+        td2 = document.createElement("td");
+        span1 = document.createElement("span")
+        span1.classList.add("block-email");
+        // création d'un nœud texte
+        texte = document.createTextNode(result[2]);
+        // ajoute le nœud texte créé au span <span>
+        span1.appendChild(texte);
+        // ajouter le span au td
+        td2.appendChild(span1);
+        // ajoute la cellule <td> à la ligne <tr>
+        row.appendChild(td2);
+
+            // création d'un élément <td> 3
+        td3 = document.createElement("td");
+        td3.classList.add("desc");
+        // création d'un nœud texte
+        texte = document.createTextNode(new Date(result[5]*1000).toLocaleString('en-us', {year:"numeric", month:"short", day:"numeric", hour:"numeric", minute:"numeric", second:"numeric"}));
+        // ajoute le nœud texte créé à la cellule <td>
+        td3.appendChild(texte);
+        // ajoute la cellule <td> à la ligne <tr>
+        row.appendChild(td3);
+
+        // création d'un élément <td> 4
+        td4 = document.createElement("td");
+        // création d'un nœud texte
+        //texte = document.createTextNode(new Date().toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"}),);
+        texte = document.createTextNode(result[0]);
+        // ajoute le nœud texte créé à la cellule <td>
+        td4.appendChild(texte);
+        // ajoute la cellule <td> à la ligne <tr>
+        row.appendChild(td4);
       
-              // Execute adopt as a transaction by sending account
-              return ProvenanceInstance.findProduct(seriaNo);
-            }).then(function(result){
-              console.log("product");
-              result[1][0]=result[1][0].toNumber();
-              result[1][1]=result[1][1].toNumber();
-              result[2]=result[2].toNumber()
-              console.log(result);
-              callback(result);
-            }).catch(function(err){
-              console.log(err.message);
-              callback("ERROR 404")
-            });
-        });   
+        //// création d'un élément <td> 6
+        //td6 = document.createElement("td");
+        //// création d'un nœud texte
+        //texte = document.createTextNode(address);
+        //// ajoute le nœud texte créé à la cellule <td>
+        //td6.appendChild(texte);
+        //// ajoute la cellule <td> à la ligne <tr>
+        //row.appendChild(td6);
+      
+        // création d'un élément <td> 7
+        td7 = document.createElement("td");
+        div1 = document.createElement("div");
+        div1.classList.add("table-data-feature");
+        button1 = document.createElement("button");
+        button1.setAttribute('title', "More");
+        button1.setAttribute('class', "item");
+        button1.setAttribute('data-toggle', "modal");
+        button1.setAttribute('data-target', "#detailProduct")
+
+        //button1.setAttribute('onclick', 'certifyProd(result[0]);')
+        i1 = document.createElement("i");
+        i1.classList.add("zmdi", "zmdi-more");
+        button2 = document.createElement("button");
+        button2.setAttribute('title', "Delete");
+        button2.setAttribute('class', "item");
+        button2.setAttribute('onclick', 'utility.removeProduct(result[1]);')
+        i2 = document.createElement("i");
+        i2.classList.add("zmdi", "zmdi-delete");
+        button1.appendChild(i1); 
+        button2.appendChild(i2);
+        div1.appendChild(button1);
+        div1.appendChild(button2);
+        // ajouter le span au td
+        td7.appendChild(div1);
+        // ajoute la cellule <td> à la ligne <tr>
+        row.appendChild(td7);
+        // ajoute la ligne <tr> à l'élément <tbody>
+        tablebody.appendChild(row);
+        row2 = document.createElement("tr");
+        row2.classList.add("spacer")
+        tablebody.appendChild(row2);
+
+        document.getElementById("productImg").setAttribute('src', result[3]);
+        document.getElementById("namePro").innerHTML = result[0];
+        document.getElementById("productNa").innerHTML = result[2];
+
+        var reput = Math.random().toFixed(2)
+        document.getElementById("repuPro").innerHTML = Math.random().toFixed(2);
+        document.getElementById("priceProd").innerHTML = result[4];
+       // web3.eth.getAccounts(function(error, accounts){
+       //     if (error) {
+       //       console.log(error);
+       //     }
+//
+       //     var account = accounts[0];
+       //     utility.contracts.Provenance.deployed().then(function(instance){
+       //       ProvenanceInstance = instance;
+      //
+       //       // Execute adopt as a transaction by sending account
+       //       return ProvenanceInstance.findProduct(seriaNo);
+       //     }).then(function(result){
+       //       
+//
+       //     }).catch(function(err){
+       //       console.log(err.message);
+       //     });
+       // });   
     },
 
-    allProducts: async function(callback){
+    allProducts: async function(){
       var ProvenanceInstance;
-      this.web3.eth.getAccounts(function(error, accounts){
+      web3.eth.getAccounts(function(error, accounts){
           if (error) {
             console.log(error);
           }
@@ -427,47 +556,165 @@ utility = {
             ProvenanceInstance = instance;
     
             // Execute adopt as a transaction by sending account
-            return ProvenanceInstance.allProducts();
+            return ProvenanceInstance.allProducts.call();
           }).then(function(result){
             console.log("all products");
             console.log(result);
-            callback(result);
+
+            
+            $('#latestAdd').attr('style', 'display:none');
+            $('#producerDiv').attr('style', 'display:none');
+            $('#productDiv').attr('style', 'display:block');
+            $('#supplierDiv').attr('style', 'display:none');
+            $('#shipmentDiv').attr('style', 'display:none');
+
+            $('#producer').attr('style', 'color:DarkSlateGrey');
+            $('#last').attr('style', 'color:DarkSlateGrey');
+            $('#product').attr('style', 'color:blue');
+            $('#supplier').attr('style', 'color:DarkSlateGrey');
+            $('#shipment').attr('style', 'color:DarkSlateGrey');
+
+            var tablebody = document.getElementById("tbodyProduct");
+            tablebody.innerHTML = " ";
+            for(i=0; i<result.length; i++){
+              if(result[i] != "")
+                utility.findProduct(result[i])
+            }
+              
           }).catch(function(err){
             console.log(err.message);
-            callback("ERROR 404")
           });
       });
     },
 
     // CONTRACT TRACKING
 
-    sendToken: function(address, amount, callback){
-      var TrakingInstance;
-      this.web3.eth.getAccounts(function(error, accounts){
-          if (error) {
-            console.log(error);
-          }
+    sendToken: async function(address, amount){
+    var TrakingInstance;
+    web3.eth.getAccounts(function(error, accounts){
+        if (error) {
+          console.log(error);
+        }
+        var account = accounts[0];
+        utility.contracts.Tracking.deployed().then(function(instance){
+          TrakingInstance = instance;
+  
+          // Execute adopt as a transaction by sending account
+          return TrakingInstance.sendToken(address, amount, {from: account});
+        }).then(function(result){
+          console.log("Token send");
+          console.log(result);
+          utility.getBalance();
+          // récupère une référence vers l'élément body
+        var tablebody = document.getElementById("tbodyShipment");
+        // création des cellules
+        
 
-          var account = accounts[0];
-          utility.contracts.Tracking.deployed().then(function(instance){
-            TrakingInstance = instance;
-    
-            // Execute adopt as a transaction by sending account
-            return TrakingInstance.sendToken(address, amount, {from: account});
-          }).then(function(result){
-            console.log("Token send");
-            console.log(result);
-            callback(result);
-          }).catch(function(err){
-            console.log(err.message);
-            callback("ERROR 404")
-          });
-      }); 
+        // création d'un élément <tr>
+        row = document.createElement("tr");
+        row.classList.add("tr-shadow");
+        td1 = document.createElement("td");
+        // création d'un nœud texte
+        texte = document.createTextNode(result["tx"]);
+        // ajoute le nœud texte créé à la cellule <td>
+        td1.appendChild(texte);
+        // ajoute la cellule <td> à la ligne <tr>
+        row.appendChild(td1);
+            
+        // création d'un élément <td> 2
+        td2 = document.createElement("td");
+        span1 = document.createElement("span")
+        span1.classList.add("block-email");
+        // création d'un nœud texte
+        texte = document.createTextNode(result["receipt"]);
+        // ajoute le nœud texte créé au span <span>
+        span1.appendChild(texte);
+        // ajouter le span au td
+        td2.appendChild(span1);
+        // ajoute la cellule <td> à la ligne <tr>
+        row.appendChild(td2);
+
+            // création d'un élément <td> 3
+        td3 = document.createElement("td");
+        td3.classList.add("desc");
+        // création d'un nœud texte
+        texte = document.createTextNode(result[4]);
+        // ajoute le nœud texte créé à la cellule <td>
+        td3.appendChild(texte);
+        // ajoute la cellule <td> à la ligne <tr>
+        row.appendChild(td3);
+
+        // création d'un élément <td> 4
+        td4 = document.createElement("td");
+        // création d'un nœud texte
+        //texte = document.createTextNode(new Date().toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"}),);
+        texte = document.createTextNode(result[3]);
+        // ajoute le nœud texte créé à la cellule <td>
+        td4.appendChild(texte);
+        // ajoute la cellule <td> à la ligne <tr>
+        row.appendChild(td4);
+
+        // création d'un élément <td> 5
+        td5 = document.createElement("td");
+        span2 = document.createElement("span");
+        
+          span2.classList.add("status--process");
+          texte = document.createTextNode("confirmed");
+        
+        // ajoute le nœud texte créé au span <span>
+        span2.appendChild(texte);
+        // ajouter le span au td
+        td5.appendChild(span2);
+        // ajoute la cellule <td> à la ligne <tr>
+        row.appendChild(td5);
+
+        //// création d'un élément <td> 6
+        //td6 = document.createElement("td");
+        //// création d'un nœud texte
+        //texte = document.createTextNode(address);
+        //// ajoute le nœud texte créé à la cellule <td>
+        //td6.appendChild(texte);
+        //// ajoute la cellule <td> à la ligne <tr>
+        //row.appendChild(td6);
+
+        // création d'un élément <td> 7
+        td7 = document.createElement("td");
+        div1 = document.createElement("div");
+        div1.classList.add("table-data-feature");
+        button1 = document.createElement("button");
+        button1.setAttribute('title', "Certify");
+        button1.setAttribute('class', "item");
+        button1.setAttribute('onclick', 'certifyProd(result[0]);')
+        i1 = document.createElement("i");
+        i1.classList.add("zmdi", "zmdi-edit");
+        button2 = document.createElement("button");
+        button2.setAttribute('title', "Delete");
+        button2.setAttribute('class', "item");
+        button2.setAttribute('onclick', 'utility.removeProducer(result[0]);')
+        i2 = document.createElement("i");
+        i2.classList.add("zmdi", "zmdi-delete");
+        button1.appendChild(i1); 
+        button2.appendChild(i2);
+        div1.appendChild(button1);
+        div1.appendChild(button2);
+        // ajouter le span au td
+        td7.appendChild(div1);
+        // ajoute la cellule <td> à la ligne <tr>
+        row.appendChild(td7);
+        // ajoute la ligne <tr> à l'élément <tbody>
+        tablebody.appendChild(row);
+        row2 = document.createElement("tr");
+        row2.classList.add("spacer")
+        tablebody.appendChild(row2);
+        }).catch(function(err){
+          console.log(err.message);
+        });
+    }); 
     },
 
-    getBalance: function(address, callback){
+    getBalance: function(){
       var TrakingInstance;
-      this.web3.eth.getAccounts(function(error, accounts){
+      web3.eth.getAccounts(function(error, accounts){
           if (error) {
             console.log(error);
           }
@@ -477,14 +724,13 @@ utility = {
             TrakingInstance = instance;
     
             // Execute adopt as a transaction by sending account
-            return TrakingInstance.getBalance(address);
+            return TrakingInstance.getBalance(account);
           }).then(function(result){
             console.log("balance");
             console.log(result);
-            callback(result);
+            document.getElementById("balance").innerHTML = "$"+result
           }).catch(function(err){
             console.log(err.message);
-            callback("ERROR 404")
           });
       }); 
     },

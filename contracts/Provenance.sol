@@ -19,8 +19,9 @@ contract Provenance {
     struct Product {
         string serial;
         string name;
-        address producer;
-        uint[] locationData; // array containing lat & long
+        string url;
+        string prix;
+        address producer; // array containing lat & long
         uint timeStamp;
     }
     // constructor - runs once when contract is deployed
@@ -84,15 +85,17 @@ contract Provenance {
         return true;
     }
     // function for producer to add their product to database
-    function addProduct(string memory serialNo, string memory name, uint[] memory _locationData) public {
+    function addProduct(string memory serialNo, string memory name, string memory url, string memory prix) public {
         // ensure no duplicate serial numbers and serial number isn't null
         require(products[serialNo].producer == address(0) && bytes(serialNo).length != 0, 
             "either serial number already in use or serial number entered was null");
         products[serialNo].serial = serialNo;
         products[serialNo].name = name;  
-        products [serialNo].producer = msg.sender;
-        products[serialNo].locationData = _locationData;
+        products[serialNo].url = url;
+        products[serialNo].producer = msg.sender;
         products[serialNo].timeStamp = block.timestamp;
+        products[serialNo].prix = prix;
+        
         productsBySerialNo.push(serialNo);
     }
     // function to remove product from database (can only be done by admin)
@@ -113,8 +116,8 @@ contract Provenance {
         return true;
     }
     // function to display details of product
-    function findProduct(string memory serialNo) public view returns (address, string memory, string memory, uint[] memory, uint) {
-        return (products[serialNo].producer, products[serialNo].serial, products[serialNo].name, products[serialNo].locationData, products[serialNo].timeStamp);
+    function findProduct(string memory serialNo) public view returns (address, string memory, string memory, string memory, string memory, uint) {
+        return (products[serialNo].producer, products[serialNo].serial, products[serialNo].name, products[serialNo].url, products[serialNo].prix, products[serialNo].timeStamp);
     }
     // function to displays all products
     function allProducts() public view returns (string[] memory) {
